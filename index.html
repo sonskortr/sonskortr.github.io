@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Son Skor | Skoru Tahmin Et</title>
+<style>
+  :root{--bg:#0b0f14;--kart:#141b24;--kart2:#1b2430;--cizgi:#263243;--yazi:#eef2f6;--soluk:#8b98a9;--vurgu:#00e676;--vurgu2:#ffd54a;--hata:#ff5c6c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--yazi);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;padding-bottom:40px}
+  header{padding:22px 18px 14px;text-align:center;background:linear-gradient(180deg,#0f1a12 0%,var(--bg) 100%)}
+  .logo{font-weight:900;font-size:26px;letter-spacing:1px}
+  .logo span{color:var(--vurgu)}
+  .alt{color:var(--soluk);font-size:13px;margin-top:4px}
+  nav{display:flex;gap:8px;padding:0 16px;max-width:560px;margin:0 auto 14px}
+  nav button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--cizgi);background:var(--kart);color:var(--soluk);font-weight:700;font-size:15px;cursor:pointer}
+  nav button.aktif{background:var(--vurgu);color:#04140a;border-color:var(--vurgu)}
+  main{max-width:560px;margin:0 auto;padding:0 16px}
+  .kart{background:var(--kart);border:1px solid var(--cizgi);border-radius:18px;padding:18px;margin-bottom:14px}
+  .ust{display:flex;justify-content:space-between;align-items:center;color:var(--soluk);font-size:12px;margin-bottom:14px}
+  .rozet{padding:4px 10px;border-radius:99px;font-weight:700;font-size:11px}
+  .r-acik{background:rgba(0,230,118,.15);color:var(--vurgu)}
+  .r-kapali{background:rgba(255,213,74,.15);color:var(--vurgu2)}
+  .r-bitti{background:rgba(139,152,169,.18);color:var(--soluk)}
+  .takimlar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+  .takim .bayrak{font-size:40px;line-height:1}
+  .takim .ad{font-weight:800;font-size:17px;margin-top:6px}
+  .orta{font-weight:900;font-size:30px;min-width:90px}
+  .orta.vs{font-size:16px;color:var(--soluk)}
+  .geri{text-align:center;color:var(--vurgu2);font-weight:700;font-size:14px;margin-top:12px}
+  .skorlar{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:18px 0 12px}
+  .stepper{display:flex;align-items:center;justify-content:center;gap:10px}
+  .stepper button{width:40px;height:40px;border-radius:12px;border:1px solid var(--cizgi);background:var(--kart2);color:var(--yazi);font-size:22px;font-weight:700;cursor:pointer}
+  .stepper .deger{font-size:34px;font-weight:900;min-width:34px;text-align:center}
+  .tire{font-size:28px;color:var(--soluk);font-weight:900}
+  label{display:block;color:var(--soluk);font-size:12px;margin-bottom:6px}
+  .girdi{display:flex;align-items:center;background:var(--kart2);border:1px solid var(--cizgi);border-radius:12px;padding:0 12px}
+  .girdi span{color:var(--soluk);font-weight:700}
+  .girdi input{flex:1;background:none;border:none;color:var(--yazi);font-size:16px;padding:13px 6px;outline:none}
+  .gonder{width:100%;margin-top:12px;padding:15px;border:none;border-radius:14px;background:var(--vurgu);color:#04140a;font-weight:900;font-size:16px;cursor:pointer}
+  .gonder:disabled{opacity:.5}
+  .mesaj{margin-top:10px;font-size:14px;text-align:center;min-height:18px}
+  .mesaj.ok{color:var(--vurgu)} .mesaj.err{color:var(--hata)}
+  .bar-baslik{color:var(--soluk);font-size:12px;margin:16px 0 8px;text-align:center}
+  .bar{display:flex;height:30px;border-radius:10px;overflow:hidden;font-size:12px;font-weight:800}
+  .bar div{display:flex;align-items:center;justify-content:center;white-space:nowrap;min-width:0}
+  .b1{background:#2f7cf6} .b2{background:#56606e} .b3{background:#e5394b}
+  .etiketler{display:flex;justify-content:space-between;color:var(--soluk);font-size:11px;margin-top:6px}
+  .bilenler{margin-top:14px;font-size:13px;color:var(--soluk);text-align:center;line-height:1.6}
+  .bilenler b{color:var(--vurgu2)}
+  .ara{margin-bottom:12px}
+  table{width:100%;border-collapse:collapse}
+  th{color:var(--soluk);font-size:11px;font-weight:700;text-align:left;padding:8px 6px;border-bottom:1px solid var(--cizgi)}
+  td{padding:11px 6px;border-bottom:1px solid var(--cizgi);font-size:14px}
+  td.num,th.num{text-align:center}
+  tr.ben td{background:rgba(0,230,118,.08)}
+  .sira{font-weight:900;width:36px}
+  .s1{color:#ffd54a} .s2{color:#cfd8dc} .s3{color:#ffab76}
+  .puan{font-weight:900;color:var(--vurgu)}
+  .bos{color:var(--soluk);text-align:center;padding:30px 10px;font-size:14px}
+  .kural{color:var(--soluk);font-size:12px;text-align:center;margin-top:10px;line-height:1.6}
+  footer{text-align:center;color:var(--soluk);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">SON <span>SKOR</span></div>
+  <div class="alt">Skoru tahmin et, puan topla, zirveye çık 🏆</div>
+</header>
+<nav>
+  <button id="t-tahmin" class="aktif" onclick="sekme('tahmin')">⚽ Tahmin Et</button>
+  <button id="t-tablo" onclick="sekme('tablo')">🏆 Puan Tablosu</button>
+</nav>
+<main>
+  <section id="tahmin"><div class="bos">Yükleniyor…</div></section>
+  <section id="tablo" style="display:none"></section>
+  <div class="kural">Tam skor = <b>3 puan</b> · Sadece sonucu bilmek = <b>1 puan</b><br>Her maça bir tahmin · Maç başlayınca tahminler kapanır</div>
+  <footer>Instagram: @sonskor</footer>
+</main>
+<script>
+  var API = 'https://script.google.com/macros/s/AKfycbytu7kfjVa-E-3C4MgkEosO5PHTcJR4yZY9vKeeLdNg8ZjJgBBxRZvIfcmbUty3kVai_w/exec';
+  var VERI = null, SKOR = {}, ARAMA = '';
+  var BAYRAK = {'türkiye':'🇹🇷','fransa':'🇫🇷','italya':'🇮🇹','belçika':'🇧🇪','almanya':'🇩🇪','ispanya':'🇪🇸','ingiltere':'🏴','portekiz':'🇵🇹','hollanda':'🇳🇱','hırvatistan':'🇭🇷','arjantin':'🇦🇷','brezilya':'🇧🇷'};
+
+  function kayitliAd(){ try{ return localStorage.getItem('ss_ad') || ''; }catch(e){ return ''; } }
+  function adKaydet(v){ try{ localStorage.setItem('ss_ad', v); }catch(e){} }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function bayrak(ad){ return BAYRAK[String(ad).toLocaleLowerCase('tr')] || '⚽'; }
+  function tarih(ms){ if(!ms) return ''; return new Date(ms).toLocaleString('tr-TR',{day:'numeric',month:'long',weekday:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Istanbul'}); }
+  function kalan(ms){
+    var f = ms - Date.now(); if(f <= 0) return 'Tahminler kapanıyor…';
+    var g = Math.floor(f/86400000), s = Math.floor(f%86400000/3600000), d = Math.floor(f%3600000/60000);
+    return '⏳ Tahminlerin kapanmasına ' + (g ? g+' gün ' : '') + s + ' sa ' + d + ' dk';
+  }
+  function sekme(ad){
+    document.getElementById('tahmin').style.display = ad==='tahmin' ? '' : 'none';
+    document.getElementById('tablo').style.display = ad==='tablo' ? '' : 'none';
+    document.getElementById('t-tahmin').className = ad==='tahmin' ? 'aktif' : '';
+    document.getElementById('t-tablo').className = ad==='tablo' ? 'aktif' : '';
+  }
+  function yukle(){
+    fetch(API + '?api=veri')
+      .then(function(r){ return r.json(); })
+      .then(function(v){ VERI = v; ciz(); })
+      .catch(function(){ document.getElementById('tahmin').innerHTML = '<div class="bos">Veriler yüklenemedi. Sayfayı yenile.</div>'; });
+  }
+  function dagilimHtml(m){
+    var d = VERI.dagilim[m.id];
+    if(!d || !d.toplam) return '<div class="bar-baslik">Henüz tahmin yok</div>';
+    var p1 = Math.round(d.ev/d.toplam*100), p2 = Math.round(d.ber/d.toplam*100), p3 = 100-p1-p2;
+    function parca(cls,p){ return '<div class="'+cls+'" style="width:'+p+'%">'+(p>=12?p+'%':'')+'</div>'; }
+    return '<div class="bar-baslik">'+d.toplam+' takipçi tahmin yaptı</div>'
+      + '<div class="bar">'+parca('b1',p1)+parca('b2',p2)+parca('b3',p3)+'</div>'
+      + '<div class="etiketler"><span>'+esc(m.ev)+' %'+p1+'</span><span>Beraberlik %'+p2+'</span><span>'+esc(m.dep)+' %'+p3+'</span></div>';
+  }
+  function macKarti(m){
+    var bitti = m.eg != null;
+    var rozet = m.acik ? '<span class="rozet r-acik">TAHMİNLER AÇIK</span>' : bitti ? '<span class="rozet r-bitti">MAÇ BİTTİ</span>' : '<span class="rozet r-kapali">TAHMİNLER KAPANDI</span>';
+    var orta = bitti ? '<div class="orta">'+m.eg+' - '+m.dg+'</div>' : '<div class="orta vs">VS</div>';
+    var h = '<div class="kart"><div class="ust"><span>'+esc(tarih(m.bas))+'</span>'+rozet+'</div>'
+      + '<div class="takimlar">'
+      + '<div class="takim"><div class="bayrak">'+bayrak(m.ev)+'</div><div class="ad">'+esc(m.ev)+'</div></div>'
+      + orta
+      + '<div class="takim"><div class="bayrak">'+bayrak(m.dep)+'</div><div class="ad">'+esc(m.dep)+'</div></div>'
+      + '</div>';
+    if(m.acik){
+      var s = SKOR[m.id] || (SKOR[m.id] = [0,0]);
+      h += '<div class="geri" data-bas="'+m.bas+'">'+kalan(m.bas)+'</div>'
+        + '<div class="skorlar">'
+        + '<div class="stepper"><button onclick="degis(\''+m.id+'\',0,-1)">−</button><div class="deger" id="'+m.id+'-0">'+s[0]+'</div><button onclick="degis(\''+m.id+'\',0,1)">+</button></div>'
+        + '<div class="tire">:</div>'
+        + '<div class="stepper"><button onclick="degis(\''+m.id+'\',1,-1)">−</button><div class="deger" id="'+m.id+'-1">'+s[1]+'</div><button onclick="degis(\''+m.id+'\',1,1)">+</button></div>'
+        + '</div>'
+        + '<label>Instagram kullanıcı adın</label>'
+        + '<div class="girdi"><span>@</span><input id="ad-'+m.id+'" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="31" placeholder="kullaniciadi" value="'+esc(kayitliAd())+'"></div>'
+        + '<button class="gonder" id="btn-'+m.id+'" onclick="gonder(\''+m.id+'\')">Tahminimi Gönder</button>'
+        + '<div class="mesaj" id="msg-'+m.id+'"></div>';
+    } else {
+      h += dagilimHtml(m);
+      if(bitti){
+        var t = VERI.dagilim[m.id].tamBilen;
+        h += '<div class="bilenler">' + (t.length
+          ? '🎯 Tam skoru bilenler: <b>' + t.slice(0,30).map(function(k){return '@'+esc(k);}).join(', ') + (t.length>30?' ve '+(t.length-30)+' kişi daha':'') + '</b>'
+          : 'Tam skoru bilen olmadı 😅') + '</div>';
+      }
+    }
+    return h + '</div>';
+  }
+  function ciz(){
+    var maclar = VERI.maclar.slice().sort(function(a,b){
+      var oa = a.acik?0:(a.eg==null?1:2), ob = b.acik?0:(b.eg==null?1:2);
+      return oa-ob || (oa===2 ? b.bas-a.bas : a.bas-b.bas);
+    });
+    document.getElementById('tahmin').innerHTML = maclar.length ? maclar.map(macKarti).join('') : '<div class="bos">Şu an tahmin açık maç yok.</div>';
+    tabloCiz();
+  }
+  function tabloCiz(){
+    var ben = kayitliAd().toLowerCase();
+    var liste = VERI.tablo.map(function(r,i){ r.sira = i+1; return r; });
+    var q = ARAMA.trim().toLowerCase().replace(/^@+/,'');
+    var goster = q ? liste.filter(function(r){ return r.k.indexOf(q) !== -1; }) : liste.slice(0,100);
+    var kutu = document.getElementById('tablo');
+    if(!document.getElementById('ara')){
+      kutu.innerHTML = '<div class="kart"><div class="girdi ara"><span>🔍</span><input id="ara" placeholder="Sıranı bul: kullanıcı adı" autocapitalize="none" oninput="ARAMA=this.value;tabloCiz()"></div><div id="tablo-icerik"></div></div>';
+    }
+    var h = '';
+    if(!liste.length){
+      h += '<div class="bos">Puan tablosu ilk maçtan sonra dolacak.</div>';
+    } else if(!goster.length){
+      h += '<div class="bos">Bu isimde kimse bulunamadı.</div>';
+    } else {
+      h += '<table><tr><th>#</th><th>Kullanıcı</th><th class="num">Bildiği</th><th class="num">Tam</th><th class="num">Puan</th></tr>'
+        + goster.map(function(r){
+            var sc = r.sira<=3 ? ' s'+r.sira : '';
+            return '<tr'+(r.k===ben?' class="ben"':'')+'><td class="sira'+sc+'">'+r.sira+'</td><td>@'+esc(r.k)+'</td><td class="num">'+r.bilinen+'</td><td class="num">'+r.tam+'</td><td class="num puan">'+r.puan+'</td></tr>';
+          }).join('') + '</table>';
+    }
+    document.getElementById('tablo-icerik').innerHTML = h;
+  }
+  function degis(id, i, d){
+    var s = SKOR[id]; s[i] = Math.max(0, Math.min(20, s[i]+d));
+    document.getElementById(id+'-'+i).textContent = s[i];
+  }
+  function gonder(id){
+    var ad = document.getElementById('ad-'+id).value.trim().replace(/^@+/,'');
+    var msg = document.getElementById('msg-'+id), btn = document.getElementById('btn-'+id);
+    if(!ad){ msg.className='mesaj err'; msg.textContent='Kullanıcı adını yazmayı unutma.'; return; }
+    btn.disabled = true; msg.className='mesaj'; msg.textContent='Gönderiliyor…';
+    var s = SKOR[id];
+    fetch(API, { method: 'POST', body: JSON.stringify({ macId: id, kullanici: ad, a: s[0], b: s[1] }) })
+      .then(function(r){ return r.json(); })
+      .then(function(c){
+        if(!c.ok) throw { sunucu: c.hata };
+        adKaydet(ad.toLowerCase());
+        msg.className='mesaj ok'; msg.textContent='✅ Tahminin kaydedildi: '+s[0]+' - '+s[1]+'. Bol şans!';
+        btn.textContent='Tahmin gönderildi';
+      })
+      .catch(function(e){
+        btn.disabled = false;
+        msg.className='mesaj err'; msg.textContent = (e && e.sunucu) ? e.sunucu : 'Bağlantı hatası, tekrar dene.';
+      });
+  }
+  setInterval(function(){
+    var el = document.querySelectorAll('.geri');
+    for(var i=0;i<el.length;i++){ el[i].textContent = kalan(Number(el[i].getAttribute('data-bas'))); }
+  }, 30000);
+  yukle();
+</script>
+</body>
+</html>
