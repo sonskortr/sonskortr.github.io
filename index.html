@@ -23,7 +23,8 @@
   .r-kapali{background:rgba(255,213,74,.15);color:var(--vurgu2)}
   .r-bitti{background:rgba(139,152,169,.18);color:var(--soluk)}
   .takimlar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
-  .takim .bayrak{font-size:40px;line-height:1}
+  .takim .bayrak{font-size:40px;line-height:1;height:56px;display:flex;align-items:center;justify-content:center}
+  .logo-img{width:56px;height:56px;object-fit:contain}
   .takim .ad{font-weight:800;font-size:17px;margin-top:6px}
   .orta{font-weight:900;font-size:30px;min-width:90px}
   .orta.vs{font-size:16px;color:var(--soluk)}
@@ -85,7 +86,12 @@
   function kayitliAd(){ try{ return localStorage.getItem('ss_ad') || ''; }catch(e){ return ''; } }
   function adKaydet(v){ try{ localStorage.setItem('ss_ad', v); }catch(e){} }
   function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function bayrak(ad){ return BAYRAK[String(ad).toLocaleLowerCase('tr')] || '⚽'; }
+  function slug(ad){ return String(ad).toLocaleLowerCase('tr').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/[^a-z0-9]/g,''); }
+  function bayrak(ad){
+    var b = BAYRAK[String(ad).toLocaleLowerCase('tr')];
+    if(b) return b;
+    return '<img class="logo-img" src="'+slug(ad)+'.png" alt="" onerror="this.outerHTML=\'⚽\'">';
+  }
   function tarih(ms){ if(!ms) return ''; return new Date(ms).toLocaleString('tr-TR',{day:'numeric',month:'long',weekday:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Istanbul'}); }
   function kalan(ms){
     var f = ms - Date.now(); if(f <= 0) return 'Tahminler kapanıyor…';
